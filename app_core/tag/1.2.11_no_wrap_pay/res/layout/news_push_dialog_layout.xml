@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="832dp"
+    android:layout_height="match_parent" 
+    android:background="@drawable/push_bg_shadow" >
+
+    
+    <TextView
+        android:id="@+id/newsPushTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20px"
+        android:textColor="@color/push_title_color"
+        android:layout_marginTop="16dp" 
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/newsPushTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16px"
+        android:textColor="@color/push_date_color"
+        android:layout_below="@id/newsPushTitle" 
+        android:layout_alignLeft="@id/newsPushTitle"/>
+    
+    <cn.koolcloud.ipos.appstore.views.DashedLine
+        android:id="@+id/newsPushDashLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" 
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp" 
+        android:layout_below="@id/newsPushTime" />
+    
+    <ImageView
+        android:id="@+id/newsPushImg"
+        android:layout_width="800dp"
+        android:layout_height="450dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/app_name"  
+        android:layout_below="@id/newsPushDashLine"  
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="10dp"/>  
+    
+    <TextView 
+        android:id="@+id/newsPushMessge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_below="@id/newsPushImg"
+        android:textSize="14px"
+        android:textColor="@color/push_description_color"
+        android:layout_marginTop="8dp"
+        android:layout_alignLeft="@id/newsPushImg" />
+    
+    <ImageButton
+        android:id="@+id/newsPushDeletBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/push_close"
+        android:layout_marginRight="15dp"
+        android:contentDescription="@string/app_name"/> 
+    
+ 
+
+</RelativeLayout>

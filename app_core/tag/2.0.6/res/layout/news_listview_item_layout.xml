@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0.0px"
+    android:background="@drawable/push_listitem_bg" >
+
+    <TextView
+        android:id="@+id/newsListItemTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25.0px"
+        android:textColor="@color/push_title_color"
+        android:layout_marginLeft="16dp" 
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/newsListItemTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16.0px"
+        android:textColor="@color/push_date_color"
+        android:layout_below="@id/newsListItemTitle" 
+        android:layout_alignLeft="@id/newsListItemTitle"/>
+    
+    <cn.koolcloud.ipos.appstore.views.DashedLine
+        android:id="@+id/newsListItemDashLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp" 
+        android:layout_alignLeft="@id/newsListItemTime"
+        android:layout_below="@id/newsListItemTime" />
+    
+    <ImageView
+        android:id="@+id/newsListItemImg"
+        android:layout_width="800dp"
+        android:layout_height="450dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/app_name"
+        android:layout_below="@id/newsListItemDashLine" 
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+    
+    <TextView
+        android:id="@+id/newsListItemMessge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newsListItemImg"
+        android:textSize="17.0px"
+        android:textColor="@color/push_description_color"
+        android:layout_marginTop="8dp"
+        android:layout_alignLeft="@id/newsListItemTime"
+        android:layout_alignRight="@id/newsListItemDashLine" />
+    
+    <ImageButton
+        android:id="@+id/newsListItemDestroyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/push_close"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="16dp"
+        android:contentDescription="@string/app_name"/>
+    
+<!--      <cn.koolcloud.ipos.appstore.views.DashedLine -->
+<!--         android:id="@+id/newsListItemDashLine2" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="1dp" -->
+<!--         android:layout_marginRight="16dp" -->
+<!--         android:layout_marginTop="5dp"  -->
+<!--         android:layout_alignLeft="@id/newsListItemTime" -->
+<!--         android:layout_below="@id/newsListItemMessge" /> -->
+    
+     <LinearLayout  
+        android:id="@+id/newsListItemDeletBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/newsListItemImg" 
+        android:layout_alignRight="@id/newsListItemImg"
+        android:layout_below="@id/newsListItemMessge"
+        android:background="@drawable/push_news_selector"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+         
+         <ImageView
+	        android:id="@+id/newsListItemDeleteImg"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/push_delete2"
+	        android:contentDescription="@string/app_name"/>
+         
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/delete"
+             android:layout_marginLeft="30dp"
+             android:textColor="@color/push_delete"
+             android:textSize="25.0px" />
+    
+     </LinearLayout>
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@id/newsListItemDeletBtn"/>
+
+</RelativeLayout>
