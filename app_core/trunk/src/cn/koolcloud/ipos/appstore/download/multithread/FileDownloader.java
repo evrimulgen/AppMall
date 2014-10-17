@@ -16,6 +16,7 @@ import android.content.Context;
 import android.os.Looper;
 import cn.koolcloud.ipos.appstore.R;
 import cn.koolcloud.ipos.appstore.utils.MyLog;
+import cn.koolcloud.ipos.appstore.utils.MySPEdit;
 import cn.koolcloud.ipos.appstore.utils.ToastUtil;
 
 @SuppressLint("ShowToast")
@@ -48,6 +49,8 @@ public class FileDownloader {
 	private int millisecond = 1000;
 	private String paramJson;
 	private boolean notFinish = true;//下载未完成
+	
+	private boolean isinit = false;
 
 	/**
 	 * 获取线程数
@@ -173,14 +176,21 @@ public class FileDownloader {
 				//计算每条线程下载的数据长度
 				this.block = (this.fileSize % this.mtUnit.threads.length)==0? this.fileSize / this.mtUnit.threads.length 
 						: this.fileSize / this.mtUnit.threads.length + 1;
-				print("block的长度"+ this.block);
+				isinit = true;
+				print("block的长度"+ this.block);				
 			}else{
-				System.out.println("write paramsJson error");
+				isinit = false;
+				System.out.println("write paramsJson error url"+downloadUrl
+			+" input params ="+paramJson);
 				//throw new RuntimeException("server no response ");
 			}
-		} catch (Exception e) {
+		}catch (Exception e) {
 			print(e.toString());
 			e.printStackTrace();
+			isinit = false;
+			MySPEdit.setTimeIsError(context, true);
+			System.out.println("write paramsJson error url"+downloadUrl
+					+" input params ="+paramJson);
 			//throw new RuntimeException("don't connection this url");
 			Looper.prepare();
     		ToastUtil.showToast(context, R.string.no_data_toast,true);
@@ -316,4 +326,13 @@ public class FileDownloader {
 	private static void print(String msg){
 		MyLog.i(msg);
 	}
+
+	/**
+	 * @return the isinit
+	 */
+	public boolean isIsinit() {
+		return isinit;
+	}
+	
+	
 }

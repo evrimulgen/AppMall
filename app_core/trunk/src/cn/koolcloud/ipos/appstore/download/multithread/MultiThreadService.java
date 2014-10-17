@@ -11,9 +11,14 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Looper;
+import cn.koolcloud.ipos.appstore.R;
+import cn.koolcloud.ipos.appstore.adapter.GeneralAppsListAdapter;
 import cn.koolcloud.ipos.appstore.constant.Constants;
 import cn.koolcloud.ipos.appstore.entity.App;
 import cn.koolcloud.ipos.appstore.utils.MyLog;
+import cn.koolcloud.ipos.appstore.utils.MySPEdit;
+import cn.koolcloud.ipos.appstore.utils.ToastUtil;
 
 public class MultiThreadService extends Service{
 
@@ -25,7 +30,6 @@ public class MultiThreadService extends Service{
 	public static final int IS_DOWNLOADING = 1;
 	public static final int IS_PAUSEING = 2;
 	public static final int HAVE_FINISHED = 3;
-
     public class IBinderImple extends Binder {
 
     	/**
@@ -38,7 +42,22 @@ public class MultiThreadService extends Service{
     	public void StartDownload(final String downloadUrl, final File savedir,
     			final int threadnum, final App app, final String paramJson,
     			final int versionCode) {
-
+    		MyLog.i(" mulitiThreadService"+GeneralAppsListAdapter.recordDownMap.size()+",num"+MySPEdit.getAppNums(MultiThreadService.this));
+    		if(MySPEdit.getTimeIsError(MultiThreadService.this)){
+    		}else{	
+    			MyLog.i(" mulitiThreadService"+ +GeneralAppsListAdapter.recordDownMap.size());
+    			if(!(GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(MultiThreadService.this))){
+    				MyLog.i(" mulitiThreadService"+GeneralAppsListAdapter.recordDownMap.size()+",num is not "+MySPEdit.getAppNums(MultiThreadService.this));
+    				ToastUtil.showToast(MultiThreadService.this, R.string.app_sync_down_num, true);
+ 					return;
+    			}else {
+    				if(!GeneralAppsListAdapter.recordDownMap.containsKey(app.getPackageName())){
+    					GeneralAppsListAdapter.recordDownMap.put(app.getPackageName(), true);
+    					MyLog.i("99999999999999999");
+    				}
+    			}
+    		}
+    		
         	new Thread(new Runnable() {
     			@Override
     			public void run() {
@@ -50,6 +69,28 @@ public class MultiThreadService extends Service{
     						savedir, threadnum, paramJson, app.getPackageName() + ".apk");
     					loaderMap.put(app.getPackageName()+Integer.toString(versionCode), loader);
     				}
+    				
+    				if(!loader.isIsinit()){
+						if(GeneralAppsListAdapter.recordDownMap.containsKey(app.getPackageName()))
+							GeneralAppsListAdapter.recordDownMap.remove(app.getPackageName());		 
+    					System.out.println("not init  downloadUrl --"+ downloadUrl+","+paramJson);
+    					return;
+    				}
+    				MyLog.i("now recorddownMap--size-"+GeneralAppsListAdapter.recordDownMap.size()+"flag - "+MySPEdit.getTimeIsError(MultiThreadService.this));
+					if(MySPEdit.getTimeIsError(MultiThreadService.this)){
+						MyLog.i("now recorddownMap-true0000-size-"+GeneralAppsListAdapter.recordDownMap.size());
+	    				if((GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(MultiThreadService.this))){
+							if(!GeneralAppsListAdapter.recordDownMap.containsKey(app.getPackageName()))
+	        					GeneralAppsListAdapter.recordDownMap.put(app.getPackageName(), true);
+						}else{
+							Looper.prepare();
+				    		ToastUtil.showToast(MultiThreadService.this, R.string.app_sync_down_num,true);
+				    		Looper.loop();
+				    		Looper.getMainLooper().quit(); 
+				    		return;
+						}
+	    				MyLog.i("now recorddownMap-true-111size-"+GeneralAppsListAdapter.recordDownMap.size());
+					}
     				loader.start();
     				stateRecord.delete(app.getPackageName()+Integer.toString(versionCode));
     				stateRecord.insert(app.getPackageName()+Integer.toString(versionCode), IS_DOWNLOADING, 0);
@@ -96,6 +137,8 @@ public class MultiThreadService extends Service{
     					});
     				} catch (Exception e) {
     					e.printStackTrace();
+    					if(GeneralAppsListAdapter.recordDownMap.containsKey(app.getPackageName()))
+							GeneralAppsListAdapter.recordDownMap.remove(app.getPackageName());
     					Intent intent1 = new Intent(Constants.ACTION_TASK_ERROR);
     			        intent1.putExtra(Constants.TASK_PACKAGE_NAME, app.getPackageName());
     			        MultiThreadService.this.sendBroadcast(intent1);
@@ -108,6 +151,8 @@ public class MultiThreadService extends Service{
     		FileDownloader loader = loaderMap.get(packageName+Integer.toString(versionCode));
     		if(loader != null)
     		{
+    			if(GeneralAppsListAdapter.recordDownMap.containsKey(packageName))
+					GeneralAppsListAdapter.recordDownMap.remove(packageName);
     			loader.pause();
     			stateRecord.updateState(packageName+Integer.toString(versionCode), IS_PAUSEING);
     			Intent intent = new Intent(Constants.ACTION_TASK_PAUSED);
@@ -132,6 +177,8 @@ public class MultiThreadService extends Service{
     		FileDownloader loader = loaderMap.get(packageName+Integer.toString(versionCode));
     		if(loader != null)
     		{
+    			if(GeneralAppsListAdapter.recordDownMap.containsKey(packageName));
+					GeneralAppsListAdapter.recordDownMap.remove(packageName);		 
     			stateRecord.updateState(packageName+Integer.toString(versionCode), HAVE_FINISHED);
     			Intent intent = new Intent(Constants.ACTION_TASK_FINISHED);
     			intent.putExtra(Constants.TASK_PACKAGE_NAME, packageName);

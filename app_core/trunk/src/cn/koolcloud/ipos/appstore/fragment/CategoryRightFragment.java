@@ -1,7 +1,12 @@
 package cn.koolcloud.ipos.appstore.fragment;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +19,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +41,12 @@ import cn.koolcloud.ipos.appstore.entity.Category;
 import cn.koolcloud.ipos.appstore.entity.ResultSet;
 import cn.koolcloud.ipos.appstore.interfaces.CallBack;
 import cn.koolcloud.ipos.appstore.utils.Env;
+import cn.koolcloud.ipos.appstore.utils.InputStreamUtils;
 import cn.koolcloud.ipos.appstore.utils.JsonUtils;
 import cn.koolcloud.ipos.appstore.utils.MyLog;
 import cn.koolcloud.ipos.appstore.utils.MySPEdit;
 import cn.koolcloud.ipos.appstore.utils.ToastUtil;
+import cn.koolcloud.ipos.appstore.utils.Utils;
 
 public class CategoryRightFragment extends BaseFragment implements OnItemClickListener {
 	public static final int HANDLE_REFRESH_ADAPTER = 0;
@@ -194,6 +202,8 @@ public class CategoryRightFragment extends BaseFragment implements OnItemClickLi
 		if(mAppListAdapter != null) {
 			mAppListAdapter.notifyDataSetChanged();
 		}
+		//检测系统 自动获取时间是否选中，没选择提示用户
+		Utils.judgeTimeIsError(getActivity());
 		super.onResume();
 	}
 

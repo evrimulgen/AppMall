@@ -421,6 +421,8 @@ public class AppDetailMainFragment extends BaseFragment implements View.OnClickL
 	});
 	
 	public void imageViewOutAniamtion(View view) {
+		if(view == null)
+			return;
 		view.startAnimation(AnimationUtils.loadAnimation(application,
 				R.anim.right_left_out));
 	}

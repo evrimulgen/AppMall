@@ -1,7 +1,6 @@
 package cn.koolcloud.ipos.appstore.fragment;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -33,7 +31,6 @@ import android.widget.Toast;
 import cn.koolcloud.ipos.appstore.MainActivity;
 import cn.koolcloud.ipos.appstore.PayWebViewActivity;
 import cn.koolcloud.ipos.appstore.R;
-import cn.koolcloud.ipos.appstore.adapter.GeneralAppsListAdapter;
 import cn.koolcloud.ipos.appstore.api.ApiService;
 import cn.koolcloud.ipos.appstore.cache.ImageDownloader;
 import cn.koolcloud.ipos.appstore.constant.Constants;
@@ -52,9 +49,6 @@ import cn.koolcloud.ipos.appstore.entity.App;
 import cn.koolcloud.ipos.appstore.entity.Pay;
 import cn.koolcloud.ipos.appstore.interfaces.CallBack;
 import cn.koolcloud.ipos.appstore.pay.Base64;
-import cn.koolcloud.ipos.appstore.pay.Keys;
-import cn.koolcloud.ipos.appstore.pay.PayUtils;
-import cn.koolcloud.ipos.appstore.pay.Rsa;
 import cn.koolcloud.ipos.appstore.utils.ConvertUtils;
 import cn.koolcloud.ipos.appstore.utils.DialogUtils;
 import cn.koolcloud.ipos.appstore.utils.Env;
@@ -63,8 +57,6 @@ import cn.koolcloud.ipos.appstore.utils.MyLog;
 import cn.koolcloud.ipos.appstore.utils.MySPEdit;
 import cn.koolcloud.ipos.appstore.utils.ToastUtil;
 import cn.koolcloud.ipos.appstore.utils.Utils;
-
-import com.alipay.android.app.sdk.AliPay;
 
 public class AppDetailLeftFragment extends BaseFragment implements DownloadEngineCallback {
 	public static final int SOFTWARE_DETAIL_LEFT_REQUEST = 4;
@@ -216,6 +208,9 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 //			changeButtonState(app, downloadButton, downloadRelativeLayout, downloadProgressBar,
 //					downloadProcessTextView, true, false);
 //		}
+		//检测系统 自动获取时间是否选中，没选择提示用户
+		Utils.judgeTimeIsError(getActivity());
+		
 		initComponents();
 	}
 
@@ -391,8 +386,8 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 					downloadButton.setText(Utils.getResourceString(application,
 							R.string.go_continue));
 				}
-				if(GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
-					GeneralAppsListAdapter.recordDownMap.remove(appInfo.getPackageName());
+//				if(GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
+//					GeneralAppsListAdapter.recordDownMap.remove(appInfo.getPackageName());
 				downloadButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
@@ -403,9 +398,9 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 							downloadContext = new DownloadContext(new StartDownloadState());
 							contaxtMap.put(appInfo.getPackageName(), downloadContext);
 						}
-						if(GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(getActivity())){
-							if(!GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
-								GeneralAppsListAdapter.recordDownMap.put(appInfo.getPackageName(), true);
+//						if(GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(getActivity())){
+//							if(!GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
+//								GeneralAppsListAdapter.recordDownMap.put(appInfo.getPackageName(), true);
 							downloadContext.Request(appInfo, paramJson.toString(),
 									appInfo.getVersionCode());
 							myDialog.show();
@@ -416,9 +411,9 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 									myDialog.dismiss();
 								}
 							}, 1500);
-						}else{
-							ToastUtil.showToast(getActivity(), R.string.app_sync_down_num, true);
-						}
+//						}else{
+//							ToastUtil.showToast(getActivity(), R.string.app_sync_down_num, true);
+//						}
 //						downloadContext.Request(appInfo, paramJson.toString(),
 //								appInfo.getVersionCode());
 //						myDialog.show();
@@ -566,10 +561,10 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 							downloadContext = new DownloadContext(new StartDownloadState());
 							contaxtMap.put(appInfo.getPackageName(), downloadContext);
 						}
-						if(GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(getActivity())){
-							
-							if(!GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
-								GeneralAppsListAdapter.recordDownMap.put(appInfo.getPackageName(), true);
+//						if(GeneralAppsListAdapter.recordDownMap.size() < MySPEdit.getAppNums(getActivity())){
+//							
+//							if(!GeneralAppsListAdapter.recordDownMap.containsKey(appInfo.getPackageName()))
+//								GeneralAppsListAdapter.recordDownMap.put(appInfo.getPackageName(), true);
 							downloadContext.Request(appInfo, paramJson.toString(),
 									appInfo.getVersionCode());
 							myDialog.show();
@@ -580,9 +575,9 @@ public class AppDetailLeftFragment extends BaseFragment implements DownloadEngin
 									myDialog.dismiss();
 								}
 							}, 1500);
-						}else{
-							ToastUtil.showToast(getActivity(), R.string.app_sync_down_num, true);
-						}
+//						}else{
+//							ToastUtil.showToast(getActivity(), R.string.app_sync_down_num, true);
+//						}
 						
 						
 //						downloadContext.Request(appInfo, paramJson.toString(),

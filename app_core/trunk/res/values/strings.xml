@@ -214,4 +214,5 @@
     <string name="pay_in_progress">支付处理中</string>
     <string name="delete">删除消息</string>
     <string name="update_is_null">你所安装的软件都是最新版本！</string>
+    <string name="time_sync">系统设置中自动获取时间没有选中</string>
 </resources>

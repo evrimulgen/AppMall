@@ -154,4 +154,14 @@ public class MySPEdit {
 		SharedPreferences prefer = context.getSharedPreferences(UPDATE_RECORD, Context.MODE_PRIVATE);
 		return prefer.getString("versionName","");
 	}
+	
+	public static boolean getTimeIsError(Context context){
+		SharedPreferences prefer = context.getSharedPreferences(UPDATE_RECORD, Context.MODE_MULTI_PROCESS);
+		return prefer.getBoolean("timeIsError",false); 
+	}
+	
+	public static void setTimeIsError(Context context,boolean result){
+		SharedPreferences prefer = context.getSharedPreferences(UPDATE_RECORD, Context.MODE_MULTI_PROCESS);
+		prefer.edit().putBoolean("timeIsError", result).commit();
+	}
 }

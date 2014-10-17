@@ -1,20 +1,32 @@
 package cn.koolcloud.ipos.appstore;
 
+import org.json.JSONObject;
+
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailCommentFragment;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailCommentFragment.OnFragmentActionListener;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailLeftFragment;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailLeftFragment.OnSoftwareDetailLeftAttachedListener;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailMainFragment;
 import cn.koolcloud.ipos.appstore.fragment.AppDetailMainFragment.OnSoftwareDetailAttachedListener;
+import cn.koolcloud.ipos.appstore.ui.UserBean;
+import cn.koolcloud.ipos.appstore.utils.MyLog;
+import cn.koolcloud.pos.service.IMerchService;
+import cn.koolcloud.pos.service.ISecureService;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -33,6 +45,37 @@ public class AppDetailActivity extends BaseActivity implements SearchView.OnQuer
 	private static FragmentManager fragmentManager = null;
 	private Bundle mBundle;
 	private static AppDetailActivity instance;
+	protected IMerchService mIMerchService;
+	private String[] unkonwLoginArray = null;
+	private MyApp myApp;
+	
+    private ServiceConnection merchConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mIMerchService = IMerchService.Stub.asInterface(service);
+			Log.i("Client", "Bind mMerchService Success:" + mIMerchService.getClass().toString());
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mIMerchService = null;
+		}
+	};
+	
+	protected ISecureService mISecureService;
+	private ServiceConnection secureConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mISecureService = ISecureService.Stub.asInterface(service);
+			Log.i("Client", "Bind mSecureService Success:" + mISecureService.getClass().toString());
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mISecureService = null;
+		}
+	};
+
 	
 	public static AppDetailActivity getInstance() {
 		return instance;
@@ -46,11 +89,79 @@ public class AppDetailActivity extends BaseActivity implements SearchView.OnQuer
 		setContentView(R.layout.software_detail);
 		fragmentManager = getSupportFragmentManager();
 		mBundle = getIntent().getExtras();
-		
+
+		myApp = (MyApp) getApplication();
+		unkonwLoginArray = getResources().getStringArray(R.array.unknow_login_array);
+
 		activityList.add(this);
 		initActionBar();
 		
 		initFragments();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		boundServices();
+		MyLog.i("-----onStart  categoryActivity------");
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				UserBean userBean = myApp.getUserBean();
+				if (mISecureService != null) {
+					try {
+						String userInfo = mISecureService.getUserInfo();
+						if(userInfo != null){
+							JSONObject jsObj = new JSONObject(userInfo);
+							MyLog.e("operator:" + jsObj.optString("userName") + " gradeId:" + jsObj.optString("gradeId") + " userStatus:" + jsObj.optString("userStatus"));
+	                		MyLog.i("-----onStart  categoryActivity------");
+	                		if(userBean != null){
+	                			userBean.setUserName(jsObj.optString("userName"));
+	                    		userBean.setGradeId(jsObj.optString("gradeId"));
+	                    		userBean.setUserStatus(jsObj.optString("userStatus"));
+	                    		
+	                		}
+						}else{
+							userBean.setUserName(unkonwLoginArray[0]);
+	                		userBean.setGradeId("2");
+	                		userBean.setUserStatus(unkonwLoginArray[3]);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						userBean.setUserName(unkonwLoginArray[0]);
+                		userBean.setGradeId("2");
+                		userBean.setUserStatus(unkonwLoginArray[3]);
+						MyLog.i("-----onStart Exception  categoryActivity------");
+	                   // isAIDLSuccess = false; 
+					}
+				}
+				
+				if (mIMerchService != null) {
+					try {
+						String merchName = mIMerchService.getMerchInfo().getMerchName();
+						String merchId = mIMerchService.getMerchInfo().getMerchId();
+						String terminalId = mIMerchService.getMerchInfo().getTerminalId();
+						
+						MyLog.e("merchName:" + merchName + " merchId:" + merchId + " terminalId:" + terminalId);
+					
+						userBean.setMerchName(merchName);
+                		userBean.setMerchId(merchId);
+                		userBean.setTerminalId(terminalId);
+                		
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else{
+					//myApp.setUserBean(userBean);
+				}
+			}
+		}, 500);
+	}
+	
+	@Override
+	protected void onStop() {
+		unboundServices();
+		super.onStop();
 	}
 	
 	private void initFragments() {
@@ -181,4 +292,28 @@ public class AppDetailActivity extends BaseActivity implements SearchView.OnQuer
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	private void boundServices() {
+		
+		try{
+			Intent mserchService = new Intent(IMerchService.class.getName());
+			bindService(mserchService, merchConnection, BIND_AUTO_CREATE);
+        
+			Intent secureService = new Intent(ISecureService.class.getName());
+			bindService(secureService, secureConnection, BIND_AUTO_CREATE);
+		}catch(SecurityException e){
+			e.printStackTrace();
+			//TODO just for test that 绑定失败 一种可能情况，远程service apk升级，本程序继续绑定久的service
+			secureConnection = null;
+			Toast.makeText(getApplication(), "绑定失败", 5000).show();
+		}
+	}
+
+	private void unboundServices() {
+		if(merchConnection != null)
+			unbindService(merchConnection);
+		if(secureConnection != null)
+			unbindService(secureConnection);
+	}
+
 }

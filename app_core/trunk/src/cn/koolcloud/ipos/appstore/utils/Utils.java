@@ -1,7 +1,9 @@
 package cn.koolcloud.ipos.appstore.utils;
 
 
+import cn.koolcloud.ipos.appstore.R;
 import android.content.Context;
+import android.provider.Settings;
 
 /**
  * <p>Title: Utils.java</p>
@@ -76,4 +78,23 @@ public class Utils {
         }
         return args;
 	}
+	
+	public static void judgeTimeIsError(final Context context){
+		 MyLog.i("Categoryright----judgeTimeIsError---:");
+		 final int ON = 1;  
+			final int OFF = 0;  
+			int nAutoTimeStatus = Settings.System.getInt(  
+	               context.getContentResolver(), Settings.System.AUTO_TIME, OFF); 
+			 MyLog.i("当前时间同步状态：" + nAutoTimeStatus);  
+			 if(nAutoTimeStatus == OFF){
+				 Settings.System.putInt(context.getContentResolver(),  
+		                 Settings.System.AUTO_TIME, nAutoTimeStatus == OFF ? ON  
+		                         : ON); 
+				 MySPEdit.setTimeIsError(context, true);
+				 MyLog.i("now--------------"+MySPEdit.getTimeIsError(context));
+				 ToastUtil.showToast(context, R.string.time_sync, true);
+			 }else{
+				 MySPEdit.setTimeIsError(context, false);
+			 }
+		}
 }

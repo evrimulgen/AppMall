@@ -375,8 +375,8 @@ public class GeneralAppsListAdapter extends BaseAdapter {
 					downloadButton.setText(Utils.getResourceString(mApplication,
 							R.string.go_continue));
 				}
-				if(recordDownMap.containsKey(appInfo.getPackageName()))
-					recordDownMap.remove(appInfo.getPackageName());
+//				if(recordDownMap.containsKey(appInfo.getPackageName()))
+//					recordDownMap.remove(appInfo.getPackageName());
 				downloadButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
@@ -389,14 +389,14 @@ public class GeneralAppsListAdapter extends BaseAdapter {
 							downloadContext = new DownloadContext(new StartDownloadState());
 							contaxtMap.put(appInfo.getPackageName(), downloadContext);
 						}
-						if(recordDownMap.size() < MySPEdit.getAppNums(ctx)){
-							if(!recordDownMap.containsKey(appInfo.getPackageName()))
-								recordDownMap.put(appInfo.getPackageName(), true);
+//						if(recordDownMap.size() < MySPEdit.getAppNums(ctx)){
+//							if(!recordDownMap.containsKey(appInfo.getPackageName()))
+//								recordDownMap.put(appInfo.getPackageName(), true);
 							downloadContext.Request(appInfo, paramJson.toString(),
 									appInfo.getVersionCode());
-						}else{
-							ToastUtil.showToast(ctx, R.string.app_sync_down_num, true);
-						}
+//						}else{
+//							ToastUtil.showToast(ctx, R.string.app_sync_down_num, true);
+//						}
 //						downloadContext.Request(appInfo.getPackageName(), paramJson.toString(),
 //								appInfo.getVersionCode());
 					}
@@ -525,14 +525,10 @@ public class GeneralAppsListAdapter extends BaseAdapter {
 								contaxtMap.put(appInfo.getPackageName(), downloadContext);
 							}
 							
-							if(recordDownMap.size() < MySPEdit.getAppNums(ctx)){
-								if(!recordDownMap.containsKey(appInfo.getPackageName()))
-									recordDownMap.put(appInfo.getPackageName(), true);
-								downloadContext.Request(appInfo, paramJson.toString(),
-										appInfo.getVersionCode());
-							}else{
-								ToastUtil.showToast(ctx, R.string.app_sync_down_num, true);
-							}
+							 
+							downloadContext.Request(appInfo, paramJson.toString(),
+									appInfo.getVersionCode());
+							 
 							
 //							downloadContext.Request(appInfo.getPackageName(), paramJson.toString(),
 //									appInfo.getVersionCode());
@@ -558,15 +554,15 @@ public class GeneralAppsListAdapter extends BaseAdapter {
 								downloadContext = new DownloadContext(new StartDownloadState());
 								contaxtMap.put(appInfo.getPackageName(), downloadContext);
 							}
-							if(recordDownMap.size() < MySPEdit.getAppNums(ctx)){
-								
-								if(!recordDownMap.containsKey(appInfo.getPackageName()))
-									recordDownMap.put(appInfo.getPackageName(), true);
+//							if(recordDownMap.size() < MySPEdit.getAppNums(ctx)){
+//								
+//								if(!recordDownMap.containsKey(appInfo.getPackageName()))
+//									recordDownMap.put(appInfo.getPackageName(), true);
 								downloadContext.Request(appInfo, paramJson.toString(),
 										appInfo.getVersionCode());
-							}else{                                      
-								ToastUtil.showToast(ctx, R.string.app_sync_down_num, true);
-							}  
+//							}else{                                      
+//								ToastUtil.showToast(ctx, R.string.app_sync_down_num, true);
+//							}  
 //							downloadContext.Request(appInfo.getPackageName(), paramJson.toString(),
 //									appInfo.getVersionCode());
 						}

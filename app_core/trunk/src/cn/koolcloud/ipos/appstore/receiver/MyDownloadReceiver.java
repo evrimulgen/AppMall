@@ -53,7 +53,8 @@ public class MyDownloadReceiver extends DownloadTaskReceiver {
 		File file = new File(context.getFilesDir(), taskPkgName + ".apk");
 		if (file.exists()) {
 			//use common installer
-			GeneralAppsListAdapter.recordDownMap.remove(taskPkgName);
+			if(GeneralAppsListAdapter.recordDownMap.containsKey(taskPkgName))
+				GeneralAppsListAdapter.recordDownMap.remove(taskPkgName);
 			Env.install(context, file, CategoryRightFragment.GENERAL_APPS_INSTALL_REQUEST);
 		} else {
 			ToastUtil.showToast(context, R.string.str_apk_download_failure);
